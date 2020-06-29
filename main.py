@@ -23,11 +23,12 @@ hielixir = Item('MegaElixir', 'elixir', 'Fully restores parties HP/MP', 9999)
 
 grenade = Item('Grenade', 'attack', 'Deals 500 damage', 500)
 
-
+player_spells = [fire, thunder, blizzard, meteor, cure, curea]
+player_items = [potion, hipotion, superpotion, elixir, hielixir, grenade]
 
 # Instantiate People
-player = Person(460, 65, 60, 34, [fire, thunder, blizzard, meteor, cure, curea])
-enemy = Person(1200, 65, 45, 25, [])
+player = Person(460, 65, 60, 34, player_spells, player_items)
+enemy = Person(1200, 65, 45, 25, [],[])
 
 running = True
 i = 0
@@ -39,7 +40,6 @@ while running:
     player.choose_action()
     choice = input('Choose Action:')
     index = int(choice) - 1
-    print('You chose', choice)
 
     if index == 0:
         dmg = player.generate_damage()
@@ -47,7 +47,11 @@ while running:
         print('You attacked for', dmg, 'points of damage')
     elif index == 1:
         player.choose_magic()
-        magic_choice = int(input('Choose Magic:')) - 1
+        magic_choice = int(input('Choose Magic: ')) - 1
+
+        if magic_choice == -1:
+            continue
+
         spell = player.magic[magic_choice]
         magic_dmg = spell.generate_damage()
 
@@ -65,6 +69,20 @@ while running:
         elif spell.type == 'black':
             enemy.take_damage(magic_dmg)
             print(bcolors.OKBLUE + '\n' + spell.name + 'deals', str(magic_dmg), 'points of damage' + bcolors.ENDC)
+
+    elif index == 2:
+        player.choose_item()
+        item_choice = int(input('Choose Item: ')) - 1
+
+        if item_choice == -1:
+            continue
+
+        item = player.items[item_choice]
+
+        if item.type == 'potion':
+            player.heal(item.prop)
+            print(bcolors.OKGREEN + '\n'+ item.name + 'heals for', str(item.prop), 'HP' + bcolors.ENDC)
+
 
     enemy_choice = 1
 
